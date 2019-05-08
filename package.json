@@ -4,6 +4,7 @@
   "description": "vtc promocode validator",
   "dependencies": {
     "express": "4.16.4",
+    "body-parser": "^1.19.0",
     "mongoose": "5.5.6"
   }
 }
