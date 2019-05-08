@@ -24,7 +24,9 @@ Controller.prototype.getReduction = function(req,res){
             if(result.error) return res.json(result);
             if(!result.restrictions) return res.json({promocode_name: result.name, status:'accepted', avantage:result.avantage});
             if(result.restrictions && !params.arguments) return res.json({error: 'missing arguments in request'});
-            Query.authorizedQuery(result.restrictions).then(result2=>{
+            console.log('restrictions raw: ',result.restrictions);
+            Query.authorizedQuery(Object.assign(JSON.parse(result.restrictions),{name:params.promocode_name})).then(result2=>{
+                query.remove();
                 if(!result2.accepted) return res.json({promocode_name: result.name, status:'denied', reasons:{}});
                 return res.json({promocode_name: result.name, status:'accepted', avantage:result.avantage});
             })
@@ -34,7 +36,11 @@ Controller.prototype.getReduction = function(req,res){
 
 //create a new promocode
 Controller.prototype.postPromocode = function(req,res){
-    let promo = new Promo(req.body);
+    let params = req.body;
+    if (params.restrictions) {
+        params.restrictions = JSON.stringify(params.restrictions);
+    }
+    let promo = new Promo(params);
     promo.save(function(err){
         if(err){
             console.log('error creating new promocode: ',err);
@@ -43,5 +49,6 @@ Controller.prototype.postPromocode = function(req,res){
         return res.json({message: 'new promocode saved!'});
     })
 };
+
 
 module.exports = new Controller();
