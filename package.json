@@ -1,0 +1,9 @@
+{
+  "name": "vtcrebu",
+  "version": "0.0.1",
+  "description": "vtc promocode validator",
+  "dependencies": {
+    "express": "4.16.4",
+    "mongoose": "5.5.6"
+  }
+}
