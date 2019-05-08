@@ -1,4 +1,5 @@
 var Promo = require('../models/promo');
+var Query = require('../models/query');
 
 function Controller(){
 
@@ -14,11 +15,20 @@ Controller.prototype.getAllPromos = function(req,res){
 Controller.prototype.getReduction = function(req,res){
     let params = req.body;
     if(!params.promocode_name) return res.json({error: 'missing name in request'});
-    Promo.findReduction(params.promocode_name).then(result=>{
-        if(result.error) return res.json(result);
-        if(!result.restrictions) return res.json({promocode_name: result.name, status:'accepted', avantage:result.avantage});
-        if(result.restrictions && !params.arguments) return res.json({error: 'missing arguments in request'});
-        return res.json(result);
+    if(!params.arguments) return res.json({error: 'missing arguments in request'});
+    let query = new Query({name: params.promocode_name, age: params.arguments.age, meteo_is:'clear', meteo_temp:20});
+    query.save((err)=>{
+        if(err) return res.json({error: 'error creating query: ', err});
+
+        Promo.findReduction(params.promocode_name).then(result=>{
+            if(result.error) return res.json(result);
+            if(!result.restrictions) return res.json({promocode_name: result.name, status:'accepted', avantage:result.avantage});
+            if(result.restrictions && !params.arguments) return res.json({error: 'missing arguments in request'});
+            Query.authorizedQuery(result.restrictions).then(result2=>{
+                if(!result2.accepted) return res.json({promocode_name: result.name, status:'denied', reasons:{}});
+                return res.json({promocode_name: result.name, status:'accepted', avantage:result.avantage});
+            })
+        });
     });
 };
 
