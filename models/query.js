@@ -7,8 +7,11 @@ let querySchema = new Schema({
     meteo : {is:String,temp:Number}
 });
 
+//authorize a query for a promocode given restrictions
 querySchema.statics.authorizedQuery = function(restrictions){
+    mongoose.set('debug',true);
     return mongoose.model('Query').findOne(restrictions).then(x=>{
+        mongoose.set('debug',false);
         if(!x) return Promise.resolve({accepted:false});
         return Promise.resolve({accepted: true});
     });

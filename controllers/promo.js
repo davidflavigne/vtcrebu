@@ -16,7 +16,7 @@ Controller.prototype.getReduction = function(req,res){
     let params = req.body;
     if(!params.promocode_name) return res.json({error: 'missing name in request'});
     if(!params.arguments) return res.json({error: 'missing arguments in request'});
-    let query = new Query({name: params.promocode_name, age: params.arguments.age, meteo_is:'clear', meteo_temp:20});
+    let query = new Query({name: params.promocode_name, age: params.arguments.age, meteo: {is:'clear', temp:20}});
     query.save((err)=>{
         if(err) return res.json({error: 'error creating query: ', err});
 
