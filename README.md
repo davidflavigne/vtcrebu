@@ -1,6 +1,6 @@
 __Create a new promocode__
 
-curl -X POST 'http://localhost:8765/api/promocode' -H "Content-Type: application/json" -d '{"name":"WeatherCode","avantage":{"percent":20},"restrictions":{"or":[{"age":40},{"age":{"lt":35,"gt":15}}],"meteo":{"is":"clear","temp":{"gt":15}}}}'
+curl -X POST 'http://localhost:8765/api/promocode' -H "Content-Type: application/json" -d '{"name":"WeatherCode","avantage":{"percent":20},"restrictions":{"$or":[{"age":40},{"age":{"$lt":35,"$gt":15}}],"meteo.is":"clear","meteo.temp":{"$gt":15}}}'
 
 __Get authorization for a promocode__
 
